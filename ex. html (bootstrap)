@@ -1,0 +1,69 @@
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="description" content="<?=$description?>">
+    <meta name="keywords" content="<?=$keywords?>">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <title><?=$title?></title>
+    <script language="javascript" type="text/javascript" src="/application/helpers/jQuery/base/jquery.min.js"></script>
+  </head>
+  <body>
+<div class="topnav navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Навигация по сайту</span>
+        <span style="font-size:16pt;color:#fff"><i class="glyphicon glyphicon-align-justify" style="margin-top:8px"></i></span>
+      </button>
+      <a class="navbar-brand hidden-sm" href="/" title="Добро пожаловать в Мед+"><img src="/application/helpers/Styles/images/logo.png" class="logo"></a>
+    </div>
+    <div class="collapse navbar-collapse topnav-offset">
+      <ul class="nav navbar-nav">
+        <li <?if($pageurl == "main"):?>class="active"<?endif;?> ><a href="/" title="Информационная система Мед+"><i class="glyphicon glyphicon-home"></i> Главная</a></li>
+        <li <?if($pageurl == "patient"):?>class="active"<?endif;?>><a href="/patient.html" title="Информация для пациентов"><i class="glyphicon glyphicon-user"></i> Пациентам</a></li>
+        <li <?if($pageurl == "about"):?>class="active"<?endif;?>><a href="/about.html" title="О проекте Мед+"><i class="glyphicon glyphicon-star"></i> О проекте</a></li>
+        <li <?if($pageurl == "contacts"):?>class="active"<?endif;?>><a href="/contacts.html" title="Контактные данные Мед+"><i class="glyphicon glyphicon-map-marker"></i> Контакты</a></li>
+      </ul>
+      <?if($this->nativesession->get('user_login') != "true" && $this->nativesession->get('user_id') == 0):?><li class="pull-right visible-md visible-lg" style="margin-top:7px"><a href="/signup.html" class="btn btn-default" style="color:#434A54" title="Cоздать учетную запись и карту пациента"><i class="glyphicon glyphicon-plus"></i> Регистрация</a> | <a href="№" data-toggle="modal" data-target="#signin" class="btn btn-primary" style="color:#434A54" title="Войти в личный кабинет пациента"><i class="glyphicon glyphicon-log-in"></i> Вход</a></li><?else:?><li class="pull-right visible-lg" style="margin-top:7px"><a href='/profile/<?=$this->nativesession->get('user_id')?>.html' class="btn btn-default" style="color:#434A54"><i class="glyphicon glyphicon-circle-arrow-right"></i> Личный кабинет</a></li><?endif;?>
+    </div><!--/.nav-collapse -->
+  </div>
+</div>
+<div class="container offset-top">
+
+<div class="modal fade" id="signin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin-top:110px">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#1991c9;color:#fff">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" style="font-size:15px">Авторизация пациента</h4>
+      </div>
+      <div class="modal-body">
+        <div class="container" style="margin-top:15px">
+        <form class="form-horizontal" role="form" action="<?=$this->config->item('auth_url')?>/auth/access" method="POST">
+            <div class="form-group">
+              <label for="login" class="col-sm-2 control-label">Номер СНИЛС</label>
+              <div class="col-sm-4">
+                <input type="text" name="login" maxlength="14" class="form-control" id="snils" placeholder="Номер СНИЛС" required autofocus>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="snils" class="col-sm-2 control-label">Пароль</label>
+              <div class="col-sm-4">
+                <input type="text" name="password" class="form-control" id="snils" placeholder="Пароль" required>
+              </div>
+            </div>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Войти</button>
+        </form>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
