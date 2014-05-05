@@ -1,0 +1,78 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Turn extends CI_Controller {
+
+	public function __construct(){
+    	parent::__construct();
+    	$this->load->model('turnmod');    
+    }
+
+    public function index(){
+    	if($this->nativesession->get('user_login') != "true" && $this->nativesession->get('user_card') == 0 && $this->nativesession->get('user_id') == 0 && $this->nativesession->get('user_snils') == 0){header("Location: /");}
+		if($this->config->item('enable_cache') === TRUE){$this->output->cache(10);}				
+		$header['title'] = "Электронная очередь";
+		$header['description'] = "Электронная очередь дает Вам возможность записаться на прием без очерди и не выходя из дома";
+		$header['keywords'] = "электронная очередь, запись на прием, к врачу, записаться, записаться онлайн";
+		$header['pageurl'] = "online";
+		$data['region'] = $this->turnmod->getRegion();
+		$this->load->view('/Main/Main_header',  $header);
+		$this->load->view('/Main/Main_turn', $data);
+		$this->load->view('/Main/Main_footer');
+	}
+
+ 	public function getcity(){
+		$region_id = (integer)$this->input->post('region_id', true);
+		$data['city'] = json_encode($this->turnmod->getAjaxCity($region_id));
+		$this->output->set_output($data['city']);	
+	}
+
+	public function getcategory(){
+		$data['category'] = json_encode($this->turnmod->getAjaxCategory());
+		$this->output->set_output($data['category']);
+	}
+
+	public function gethospital(){
+		$category_id = (integer)$this->input->post('category_id', true);
+		$city_id = (integer)$this->input->post('city_id', true);
+		$data['hospital'] = json_encode($this->turnmod->getAjaxHospital($city_id, $category_id));
+		$this->output->set_output($data['hospital']);	
+	}
+
+	public function getspecial(){
+		$hospital_id = (integer)$this->input->post('hospital_id', true);
+		$data['specials'] = json_encode($this->turnmod->getAjaxSpecial($hospital_id));
+		$this->output->set_output($data['specials']);
+	}
+
+	public function getschedule(){
+		$hospital_id = (integer)$this->input->post('hospital_id', true);
+		$special_id = (integer)$this->input->post('special_id', true);
+		$data['result'] = json_encode($this->turnmod->getAjaxSchedule($hospital_id, $special_id));
+		$this->output->set_output($data['result']);
+	}
+
+	public function getReceptionTime(){
+		$docid = (integer)$this->input->post('docid', true);
+		$weekday = $this->input->post('weekday', true);
+		$this->load->library('schedule');
+		$data['result'] = $this->schedule->getFreeTicket($docid, $weekday);
+		$this->output->set_output(json_encode($data['result']));
+	}
+
+	public function submit(){
+		$city_id = $this->input->post('city_id', true);
+		$hospital_id = (integer)$this->input->post('hospital_id', true);
+		$special_id = (integer)$this->input->post('special_id', true);
+		$docid = (integer)$this->input->post('rec_docid', true);
+		$phone = $this->nativesession->get('user_mobile');
+		$snils = $this->nativesession->get('user_snils');
+		$weekday = date('Y-m-d', strtotime($this->input->post('weekday', true)));
+		$rectime = $this->input->post('rectime', true);
+		if($this->turnmod->turnComplete($city_id, $hospital_id, $special_id, $docid, $phone, $snils, $weekday, $rectime) == "true"){
+			$this->output->set_output(json_encode("true"));
+		}else{
+			$this->output->set_output(json_encode("false"));
+		}
+	}
+
+}
